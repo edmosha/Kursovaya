@@ -1,33 +1,34 @@
 #include "../Header/function.h"
 
-void UinCalc(double time[], double U_in[], int n, double t_start, double t_end, double t_1, double par_a, double par_b) {
-    double dt;
-    dt = (t_end - t_start)/(n-1);
-    time[0] = t_start;
+void UinCalc(double time[], double U_in[], int n) {
+    double t1 = 22.5, tStart = 10, tEnd = 35, a = 12, b= 12, dt;
+    dt = (tEnd - tStart) / (n - 1);
+    time[0] = tStart;
 
     for (int i = 1; i < n; i++) {
         time[i] = time[i - 1] + dt;
     }
-    double j = t_start;
+    double j = tStart;
 
     for (int i = 0; i < n; i++) {
-        if (j <= t_1) {
-            U_in[i] = par_a * (j - t_start);
+        if (j <= t1) {
+            U_in[i] = a * (j - tStart);
         } else {
-            U_in[i] = par_a * (t_1 - t_start) - par_b * (j - t_1);
+            U_in[i] = a * (t1 - tStart) - b * (j - t1);
         }
         j += dt;
     }
 }
 
-void UoutCalc(double time[], double U_in[], double U_out[], int n, double u1, double u2, double Uin1, double Uin2) {
+void UoutCalc(double time[], double U_in[], double U_out[], int n) {
+    double U1 = 0, U2 = 100, Uin1 = 2, Uin2 = 10;
     for (int i = 0; i < n; i++) {
         if (U_in[i] <= Uin1) {
-            U_out[i] = u1;
+            U_out[i] = U1;
         } else if (U_in[i] < Uin2) {
-            U_out[i] = (U_in[i]-Uin1) * (u1-u2) / (Uin2-Uin1) + u1;
+            U_out[i] = (U_in[i]-Uin1) * (U2-U1) / (Uin2-Uin1) + U1;
         } else {
-            U_out[i] = u2;
+            U_out[i] = U2;
         }
     }
 }
@@ -39,4 +40,45 @@ void Show (double  time[], double U_in[], double U_out[], int n) {
         printf ("%-8.4g\t\t\t\t%-8.4g\t\t\t\t%-8.4g\n", time[i], U_in[i], U_out[i]);
     }
     cout << endl;
+}
+
+double ParamCalc(double  time[], double U_in[], int n) {
+    double maxTime, max = -999999;
+    int numMax = -1;
+    for(int i = 0; i < n; i++) {
+        if (U_in[i] > max) {
+            max = U_in[i];
+            numMax = i;
+        }
+    }
+    maxTime = time[numMax];
+    return maxTime;
+}
+
+void SaveToFile(double  array[], int n, string fileName) {
+    fileName = "..\\" + fileName +".txt";
+    ofstream writer;
+    writer.open(fileName);
+    if (writer.is_open()) {
+        for (int i=0; i<n; i++) {
+            writer << array[i] << endl;
+        }
+    }
+    writer.close();
+}
+
+void ReadIntro() {
+    string line;
+    cout << endl;
+
+    ifstream in("..\\intro.txt");
+    if(in.is_open()) {
+        for (int i=0; i<3; i++) {
+            while (getline(in , line)) {
+                cout << line << endl;
+            }
+        }
+        in.close();
+    cout << endl;
+    }
 }

@@ -29,10 +29,13 @@ int main() {
                 }
                     break;
                 case 2: {
-                    double err = 1, eps = 0.01, par = 1000000000, par1;
-                    int N0 = N;
+                    double p = 1, eps, par = 1000000000, par1;
+                    int N0 = 11;
                     cout << "Нахождение момента времени, при котором Uin достигает максимума:" << endl;
-                    while (err > eps) {
+                    cout << "Введите желаемую погрешность: ";
+                    cin >> eps;
+                    cin.ignore();
+                    while (p > eps) {
                         t = new double [N0];
                         Uin = new double[N0];
                         Uout = new double[N0];
@@ -41,14 +44,14 @@ int main() {
                         UinCalc(t, Uin, N0);
                         UoutCalc(t, Uin, Uout, N0);
                         par1 = ParamCalc(t, Uin, N0);
-                        err = abs((par-par1)/par1);
-                        cout << "N = " << N0 << " момент времени = " << par1 << " погрешность = " << err << endl;
+                        p = abs((par - par1) / par1);
                         par = par1;
-                        N0 *= 2;
+                        N0 += 1;
 
                         delete [] t; delete[] Uin; delete [] Uout;
                         t = nullptr; Uin = nullptr; Uout = nullptr;
                     }
+                    cout << "\nN = " << N0/2 << " момент времени = " << par1 << " погрешность = " << p << endl;
                     cout << endl;
                 }
                     break;
